@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CurrencyRateApp.Context.Migrations
 {
     [DbContext(typeof(EFContext))]
-    [Migration("20200916213545_Added_Authorization_key_model")]
+    [Migration("20200916220704_Added_Authorization_key_model")]
     partial class Added_Authorization_key_model
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,6 +35,11 @@ namespace CurrencyRateApp.Context.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Salt")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(255)")
+                        .HasMaxLength(255);
 
                     b.HasKey("Id");
 

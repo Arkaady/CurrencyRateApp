@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CurrencyRateApp.Context;
+using CurrencyRateApp.Services;
+using CurrencyRateApp.Services.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -28,6 +30,9 @@ namespace CurrencyRateApp
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddControllers();
+
+            services.AddScoped<IHashService, HashService>();
+            services.AddScoped<IAuthService, AuthService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CurrencyRateApp.Context;
+using CurrencyRateApp.Services.Interfaces;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -51,12 +52,13 @@ namespace CurrencyRateApp
 
         private static void SeedDatabase(IHost host)
         {
-            using var oScope = host.Services.CreateScope();
-            var oServices = oScope.ServiceProvider;
+            using var scope = host.Services.CreateScope();
+            var services = scope.ServiceProvider;
             try
             {
-                var context = oServices.GetRequiredService<EFContext>();
-                var seedManager = new SeedManager(context);
+                var hashService = services.GetRequiredService<IHashService>();
+                var context = services.GetRequiredService<EFContext>();
+                var seedManager = new SeedManager(context, hashService);
                 seedManager.SeedDatabaseAsync().GetAwaiter().GetResult();
             }
             catch (Exception exception)

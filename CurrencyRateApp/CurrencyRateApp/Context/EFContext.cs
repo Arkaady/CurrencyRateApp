@@ -23,6 +23,11 @@ namespace CurrencyRateApp.Context
                 .HasKey(ak => ak.Id);
 
             modelBuilder.Entity<AuthorizationKey>()
+                .Property(ak => ak.Salt)
+                .IsRequired()
+                .HasMaxLength(255);
+
+            modelBuilder.Entity<AuthorizationKey>()
                 .HasIndex(ak => ak.ApiKeyHash)
                 .IsUnique();
 

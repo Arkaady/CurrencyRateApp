@@ -34,6 +34,11 @@ namespace CurrencyRateApp.Context.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Salt")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(255)")
+                        .HasMaxLength(255);
+
                     b.HasKey("Id");
 
                     b.HasIndex("ApiKeyHash")

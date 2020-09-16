@@ -14,6 +14,7 @@ namespace CurrencyRateApp.Context.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ApiKeyHash = table.Column<string>(maxLength: 255, nullable: false),
+                    Salt = table.Column<string>(maxLength: 255, nullable: false),
                     CreatedAt = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>

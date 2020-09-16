@@ -1,4 +1,5 @@
 ﻿using CurrencyRateApp.Models;
+using CurrencyRateApp.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using System.Linq;
@@ -9,10 +10,12 @@ namespace CurrencyRateApp.Context
     public class SeedManager
     {
         public EFContext DbContext { get; private set; }
+        public IHashService HashService { get; private set; }
 
-        public SeedManager(EFContext dbContext)
+        public SeedManager(EFContext dbContext, IHashService hashService)
         {
             DbContext = dbContext;
+            HashService = hashService;
         }
 
         public async Task SeedDatabaseAsync()
@@ -29,12 +32,11 @@ namespace CurrencyRateApp.Context
 
         private async Task SeedAsync()
         {
-            var authorizationKey = new AuthorizationKey
-            {
-                ApiKeyHash = "Test_Api_Key"
-            };
-
-            await DbContext.AuthorizationKeys.AddAsync(authorizationKey);
+            var key = "Test_do_ustawienia";
+            var salt = HashService.GetSalt();
+            var apiKeyHash = HashService.CalculateHash(salt, key);
+            var authenticationKey = new AuthorizationKey(salt, apiKeyHash);
+            await DbContext.AuthorizationKeys.AddAsync(authenticationKey);
             await DbContext.SaveChangesAsync();
 
             Log.Information("Database seeded successfuly");

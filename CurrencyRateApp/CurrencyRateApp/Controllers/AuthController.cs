@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using System.Threading.Tasks;
+using CurrencyRateApp.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -12,14 +9,20 @@ namespace CurrencyRateApp.Controllers
     [ApiController]
     public class AuthController : BaseController<AuthController>
     {
-        public AuthController(ILogger<AuthController> logger) : base(logger)
+        public IAuthService AuthService { get; set; }
+        public AuthController(ILogger<AuthController> logger, IAuthService authService) : base(logger)
         {
+            AuthService = authService;
         }
 
         [HttpPut]
         public async Task<ActionResult<string>> GenerateApiKeyAsync()
         {
-            throw new NotImplementedException();
+            Logger.LogInformation("Started generation new api Key");
+            var apiKey = await AuthService.GenerateApiKeyAsync();
+            Logger.LogInformation("Generated new api Key");
+
+            return Ok(apiKey);
         }
     }
 }
