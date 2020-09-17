@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CurrencyRateApp.Context;
+using CurrencyRateApp.Repositories;
 using CurrencyRateApp.Services;
 using CurrencyRateApp.Services.Interfaces;
 using Microsoft.AspNetCore.Builder;
@@ -33,6 +34,7 @@ namespace CurrencyRateApp
 
             services.AddScoped<IHashService, HashService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IDatabaseRepository, DatabaseRepository>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

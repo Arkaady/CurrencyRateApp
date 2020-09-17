@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CurrencyRateApp.Dto;
+using CurrencyRateApp.Filters;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -18,10 +19,11 @@ namespace CurrencyRateApp.Controllers
         }
 
         [HttpGet]
+        [ApiKeyAuthorization]
         public async Task<ActionResult<List<CurrencyRateResponseDto>>> GetCurrencyRateAsync(
-            [FromBody] CurrencyRateRequestDto currencyRateRequestDto, [FromHeader] string apiKey)
+             [FromHeader] string apiKey)
         {
-            throw new NotImplementedException();
+            return Ok();
         }
     }
 }

@@ -32,7 +32,7 @@ namespace CurrencyRateApp.Context
 
         private async Task SeedAsync()
         {
-            var key = "Test_do_ustawienia";
+            var key = "95c9d5ad-bb45-480c-8568-44906592f75b";
             var salt = HashService.GetSalt();
             var apiKeyHash = HashService.CalculateHash(salt, key);
             var authenticationKey = new AuthorizationKey(salt, apiKeyHash);

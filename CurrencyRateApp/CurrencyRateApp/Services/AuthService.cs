@@ -8,13 +8,13 @@ namespace CurrencyRateApp.Services
 {
     public class AuthService : IAuthService
     {
-        public IHashService HashService { get; private set; }
-        public IDatabaseRepository DatabaseRepository { get; private set; }
+        private readonly IHashService _hashService;
+        private readonly IDatabaseRepository _databaseRepository;
 
         public AuthService(IHashService hashService, IDatabaseRepository databaseRepository)
         {
-            HashService = hashService;
-            DatabaseRepository = databaseRepository;
+            _hashService = hashService;
+            _databaseRepository = databaseRepository;
         }
 
         public async Task<string> GenerateApiKeyAsync()
@@ -22,10 +22,10 @@ namespace CurrencyRateApp.Services
             try
             {
                 Guid apiKey = Guid.NewGuid();
-                var salt = HashService.GetSalt();
-                var apiKeyHash = HashService.CalculateHash(salt, apiKey.ToString());
+                var salt = _hashService.GetSalt();
+                var apiKeyHash = _hashService.CalculateHash(salt, apiKey.ToString());
 
-                var authorizationKey = await DatabaseRepository.GetApiKeyAsync();
+                var authorizationKey = await _databaseRepository.GetApiKeyAsync();
                 if (authorizationKey == null)
                 {
                     throw new Exception("Authorization key not setted");
@@ -35,7 +35,7 @@ namespace CurrencyRateApp.Services
                     authorizationKey.SetKey(salt, apiKeyHash);
                 }
 
-                await DatabaseRepository.SetApiKeyAsync(authorizationKey);
+                await _databaseRepository.SetApiKeyAsync(authorizationKey);
 
                 return apiKey.ToString();
             }
@@ -44,7 +44,26 @@ namespace CurrencyRateApp.Services
                 Log.Error(exception.Message);
                 throw new Exception("Error during generation new Api key");
             }
+        }
 
+        public async Task<bool> ValidateApiKey(string apiKey)
+        {
+            try
+            {
+                var authorizationKey = await _databaseRepository.GetApiKeyAsync();
+                if (authorizationKey == null)
+                {
+                    throw new Exception("Authorization key not setted");
+                }
+                var apiKeyHash = _hashService.CalculateHash(authorizationKey.Salt, apiKey);
+
+                return apiKeyHash == authorizationKey.ApiKeyHash;
+            }
+            catch (Exception exception)
+            {
+                Log.Error(exception.Message);
+                throw new Exception("Error during validation Api key");
+            }
         }
     }
 }

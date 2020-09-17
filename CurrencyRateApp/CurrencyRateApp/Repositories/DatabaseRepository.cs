@@ -7,20 +7,20 @@ namespace CurrencyRateApp.Repositories
 {
     public class DatabaseRepository : IDatabaseRepository
     {
-        public EFContext DbContext { get; private set; }
+        private readonly EFContext _dbContext;
 
         public DatabaseRepository(EFContext dbContext)
         {
-            DbContext = dbContext;
+            _dbContext = dbContext;
         }
 
         public async Task<AuthorizationKey> GetApiKeyAsync()
-            => await DbContext.AuthorizationKeys.FirstOrDefaultAsync();
+            => await _dbContext.AuthorizationKeys.FirstOrDefaultAsync();
 
         public async Task SetApiKeyAsync(AuthorizationKey authKey)
         {
-            DbContext.AuthorizationKeys.Update(authKey);
-            await DbContext.SaveChangesAsync();
+            _dbContext.AuthorizationKeys.Update(authKey);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

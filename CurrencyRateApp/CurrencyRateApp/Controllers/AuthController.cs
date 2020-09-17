@@ -9,17 +9,17 @@ namespace CurrencyRateApp.Controllers
     [ApiController]
     public class AuthController : BaseController<AuthController>
     {
-        public IAuthService AuthService { get; set; }
+        private readonly IAuthService _authService;
         public AuthController(ILogger<AuthController> logger, IAuthService authService) : base(logger)
         {
-            AuthService = authService;
+            _authService = authService;
         }
 
         [HttpPut]
         public async Task<ActionResult<string>> GenerateApiKeyAsync()
         {
             Logger.LogInformation("Started generation new api Key");
-            var apiKey = await AuthService.GenerateApiKeyAsync();
+            var apiKey = await _authService.GenerateApiKeyAsync();
             Logger.LogInformation("Generated new api Key");
 
             return Ok(apiKey);
