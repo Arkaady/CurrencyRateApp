@@ -1,7 +1,5 @@
-﻿using CurrencyRateApp.Context;
-using CurrencyRateApp.Models;
+﻿using CurrencyRateApp.Repositories;
 using CurrencyRateApp.Services.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using Serilog;
 using System;
 using System.Threading.Tasks;
@@ -11,12 +9,12 @@ namespace CurrencyRateApp.Services
     public class AuthService : IAuthService
     {
         public IHashService HashService { get; private set; }
-        public EFContext DbContext { get; private set; }
+        public IDatabaseRepository DatabaseRepository { get; private set; }
 
-        public AuthService(IHashService hashService, EFContext dbContext)
+        public AuthService(IHashService hashService, IDatabaseRepository databaseRepository)
         {
             HashService = hashService;
-            DbContext = dbContext;
+            DatabaseRepository = databaseRepository;
         }
 
         public async Task<string> GenerateApiKeyAsync()
@@ -27,7 +25,7 @@ namespace CurrencyRateApp.Services
                 var salt = HashService.GetSalt();
                 var apiKeyHash = HashService.CalculateHash(salt, apiKey.ToString());
 
-                var authorizationKey = await DbContext.AuthorizationKeys.FirstOrDefaultAsync();
+                var authorizationKey = await DatabaseRepository.GetApiKeyAsync();
                 if (authorizationKey == null)
                 {
                     throw new Exception("Authorization key not setted");
@@ -37,8 +35,7 @@ namespace CurrencyRateApp.Services
                     authorizationKey.SetKey(salt, apiKeyHash);
                 }
 
-                DbContext.AuthorizationKeys.Update(authorizationKey);
-                await DbContext.SaveChangesAsync();
+                await DatabaseRepository.SetApiKeyAsync(authorizationKey);
 
                 return apiKey.ToString();
             }
