@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CurrencyRateApp.Dto
 {
-    public class CurrencyRateRequestDto
+    public class CurrencyRateFilter
     {
-        public Dictionary<string, string> CurrencyCodes { get; set; }
+        public IDictionary<string, string> CurrencyCodes { get; set; } = new Dictionary<string, string>();
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
     }

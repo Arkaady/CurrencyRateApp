@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using CurrencyRateApp.Dto;
 using CurrencyRateApp.Filters;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace CurrencyRateApp.Controllers
 {
     [Route("api/[controller]")]
+    [ApiKeyAuthorization]
     [ApiController]
     public class CurrencyController : BaseController<AuthController>
     {
@@ -19,9 +17,7 @@ namespace CurrencyRateApp.Controllers
         }
 
         [HttpGet]
-        [ApiKeyAuthorization]
-        public async Task<ActionResult<List<CurrencyRateResponseDto>>> GetCurrencyRateAsync(
-             [FromHeader] string apiKey)
+        public async Task<ActionResult<List<CurrencyRateResponseDto>>> GetCurrencyRateAsync([FromQuery] CurrencyRateFilter currencyRateFilter)
         {
             return Ok();
         }

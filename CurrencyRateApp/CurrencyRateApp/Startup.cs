@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CurrencyRateApp.Context;
+using CurrencyRateApp.Filters;
 using CurrencyRateApp.Repositories;
 using CurrencyRateApp.Services;
 using CurrencyRateApp.Services.Interfaces;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -32,6 +34,12 @@ namespace CurrencyRateApp
 
             services.AddControllers();
 
+            services.AddMvc().AddFluentValidation(setup => setup.RegisterValidatorsFromAssemblyContaining<Startup>());
+            services.AddSwaggerGen(config =>
+            {
+                config.OperationFilter<ApiKeySwaggerAttribute>();
+            });
+
             services.AddScoped<IHashService, HashService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IDatabaseRepository, DatabaseRepository>();
@@ -43,6 +51,11 @@ namespace CurrencyRateApp
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Currency Rate API");
+            });
 
             app.UseHttpsRedirection();
             app.UseRouting();
