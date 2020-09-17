@@ -1,4 +1,5 @@
-﻿using CurrencyRateApp.Repositories;
+﻿using CurrencyRateApp.Exceptions;
+using CurrencyRateApp.Repositories;
 using CurrencyRateApp.Services.Interfaces;
 using Serilog;
 using System;
@@ -28,7 +29,7 @@ namespace CurrencyRateApp.Services
                 var authorizationKey = await _databaseRepository.GetApiKeyAsync();
                 if (authorizationKey == null)
                 {
-                    throw new Exception("Authorization key not setted");
+                    throw new BadRequestException("Authorization key not setted");
                 }
                 else
                 {
@@ -42,7 +43,7 @@ namespace CurrencyRateApp.Services
             catch (Exception exception)
             {
                 Log.Error(exception.Message);
-                throw new Exception("Error during generation new Api key");
+                throw new BadRequestException("Error during generation new Api key");
             }
         }
 
@@ -53,7 +54,7 @@ namespace CurrencyRateApp.Services
                 var authorizationKey = await _databaseRepository.GetApiKeyAsync();
                 if (authorizationKey == null)
                 {
-                    throw new Exception("Authorization key not setted");
+                    throw new NotFoundException("Authorization key not setted");
                 }
                 var apiKeyHash = _hashService.CalculateHash(authorizationKey.Salt, apiKey);
 
@@ -62,7 +63,7 @@ namespace CurrencyRateApp.Services
             catch (Exception exception)
             {
                 Log.Error(exception.Message);
-                throw new Exception("Error during validation Api key");
+                throw new BadRequestException("Error during validation Api key");
             }
         }
     }

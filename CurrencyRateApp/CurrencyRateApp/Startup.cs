@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CurrencyRateApp.Context;
+using CurrencyRateApp.Exceptions;
 using CurrencyRateApp.Filters;
 using CurrencyRateApp.Repositories;
 using CurrencyRateApp.Services;
@@ -39,6 +40,9 @@ namespace CurrencyRateApp
             {
                 config.OperationFilter<ApiKeySwaggerAttribute>();
             });
+
+            services.AddControllersWithViews(options =>
+                options.Filters.Add(new ApiExceptionFilterAttribute()));
 
             services.AddScoped<IHashService, HashService>();
             services.AddScoped<IAuthService, AuthService>();

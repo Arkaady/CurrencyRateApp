@@ -1,4 +1,5 @@
 ﻿using CurrencyRateApp.Dto;
+using CurrencyRateApp.Exceptions;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
@@ -67,9 +68,9 @@ namespace CurrencyRateApp.Validators
 
         private bool ValidateDateValue(DateTime endDate)
         {
-            if (DateTime.Compare(endDate, DateTime.UtcNow) > 0)
+            if (DateTime.Compare(endDate, DateTime.Now) > 0)
             {
-                throw new Exception("Date can not be from the future");
+                throw new NotFoundException("Date can not be from the future");
             }
 
             return true;

@@ -1,4 +1,5 @@
-﻿using CurrencyRateApp.Services.Interfaces;
+﻿using CurrencyRateApp.Exceptions;
+using CurrencyRateApp.Services.Interfaces;
 using System;
 using System.Security.Cryptography;
 
@@ -21,11 +22,11 @@ namespace CurrencyRateApp.Services
         {
             if (string.IsNullOrWhiteSpace(key))
             {
-                throw new ArgumentException("Can not generate hash from empty string");
+                throw new BadRequestException("Can not generate hash from empty string");
             }
             if (string.IsNullOrWhiteSpace(salt))
             {
-                throw new ArgumentException("Can not use salt as empty string");
+                throw new BadRequestException("Can not use salt as empty string");
             }
             var pbkdf2 = new Rfc2898DeriveBytes(key, GetBytes(salt), DeriveBytesIterationCount);
 
