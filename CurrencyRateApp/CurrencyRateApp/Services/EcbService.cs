@@ -1,5 +1,8 @@
-﻿using CurrencyRateApp.Exceptions;
+﻿using CurrencyRateApp.Dto;
+using CurrencyRateApp.Exceptions;
+using CurrencyRateApp.Helpers;
 using CurrencyRateApp.Services.Interfaces;
+using Microsoft.Extensions.Logging;
 using Serilog;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -11,13 +14,15 @@ namespace CurrencyRateApp.Services
     public class EcbService : ICurrencyStatisticService
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ILogger<EcbService> _logger;
 
-        public EcbService(IHttpClientFactory httpClientFactory)
+        public EcbService(IHttpClientFactory httpClientFactory, ILogger<EcbService> logger)
         {
             _httpClientFactory = httpClientFactory;
+            _logger = logger;
         }
 
-        public async Task<string> GetExchangeRateAsync(string targetCurrencyCode, 
+        public async Task<List<CurrencyRatesDto>> GetExchangeRateAsync(string targetCurrencyCode, 
             List<string> sourceCurrencyCodes)
         {
             var httpClient = _httpClientFactory.CreateClient("ecb");
@@ -45,7 +50,15 @@ namespace CurrencyRateApp.Services
                     $"targer currency: {targetCurrencyCode}");
             }
 
-            return result;
+            foreach (var singleCurrencyCode in sourceCurrencyCodes)
+            {
+                _logger.LogInformation($"Fetched data for {singleCurrencyCode}.{targetCurrencyCode} from API");
+            }
+            List<CurrencyRatesDto> parsedResult = CsvParsingHelper.ParseCsvResultToCurrencyRatesDtoList(result);
+            _logger.LogInformation($"Parsed fetched data to object");
+
+
+            return parsedResult;
         }
     }
 }

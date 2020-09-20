@@ -71,13 +71,8 @@ namespace CurrencyRateApp.Services
 
         private async Task GetExchangeRateFromApiAsync(string targetCurrencyCode, List<string> sourceCurrencyCodesToFetchFromApi)
         {
-            string exchangeRates = await _currencyStatisticService.GetExchangeRateAsync(targetCurrencyCode, sourceCurrencyCodesToFetchFromApi);
-            foreach (var singleCurrencyCode in sourceCurrencyCodesToFetchFromApi)
-            {
-                _logger.LogInformation($"Fetched data for {singleCurrencyCode}.{targetCurrencyCode} from API");
-            }
-            List<CurrencyRatesDto> result = CsvParsingHelper.ParseCsvResultToCurrencyRatesDtoList(exchangeRates);
-            _logger.LogInformation($"Parsed fetched data to object");
+            List<CurrencyRatesDto> result = await _currencyStatisticService.GetExchangeRateAsync(targetCurrencyCode, 
+                sourceCurrencyCodesToFetchFromApi);
 
             foreach (var sourceCurrencyCode in sourceCurrencyCodesToFetchFromApi)
             {
@@ -101,7 +96,8 @@ namespace CurrencyRateApp.Services
 
                 foreach (var currencyRate in _downloadedCurrencyRates)
                 {
-                    var currencyRatesFromSpecifiedPeriod = currencyRate.Values.Where(v => v.Date <= currencyRateFilter.EndDate.Date && v.Date >= startDate).ToList();
+                    var currencyRatesFromSpecifiedPeriod = currencyRate.Values.Where(v => v.Date <= currencyRateFilter.EndDate.Date && 
+                        v.Date >= startDate).ToList();
                     if (currencyRatesFromSpecifiedPeriod.Count == 0)
                     {
                         currencyRate.Message = "There is no exchangeRates for specified period";

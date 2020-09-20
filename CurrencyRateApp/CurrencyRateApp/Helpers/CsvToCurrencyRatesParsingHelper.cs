@@ -1,4 +1,6 @@
 ﻿using CurrencyRateApp.Dto;
+using CurrencyRateApp.Exceptions;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -10,34 +12,42 @@ namespace CurrencyRateApp.Helpers
     {
         public static List<CurrencyRatesDto> ParseCsvResultToCurrencyRatesDtoList(string csvResult)
         {
-            string[] currencyRatesArray = csvResult.Split(Environment.NewLine);
-            List<CurrencyRatesDto> exchangeRatesList = new List<CurrencyRatesDto>();
-            for (int i = 1; i < currencyRatesArray.Length - 1; i++)
+            try
             {
-                string[] singleLineDataArray = currencyRatesArray[i].Split(',');
-                CurrencyRatesDto currency;
-                if (i == 1)
+                string[] currencyRatesArray = csvResult.Split(Environment.NewLine);
+                List<CurrencyRatesDto> exchangeRatesList = new List<CurrencyRatesDto>();
+                for (int i = 1; i < currencyRatesArray.Length - 1; i++)
                 {
-                    currency = MapNewCurrencyRatesDto(singleLineDataArray);
-                    exchangeRatesList.Add(currency);
-                }
-                else
-                {
-                    currency = exchangeRatesList.Last();
-                    if (singleLineDataArray[2] == currency.SourceCurrencyCode && singleLineDataArray[3] == currency.DestinationCurrencyCode)
-                    {
-                        CurrencyValueDto singleDayValue = MapSingleDayValue(singleLineDataArray);
-                        currency.Values.Add(singleDayValue);
-                    }
-                    else
+                    string[] singleLineDataArray = currencyRatesArray[i].Split(',');
+                    CurrencyRatesDto currency;
+                    if (i == 1)
                     {
                         currency = MapNewCurrencyRatesDto(singleLineDataArray);
                         exchangeRatesList.Add(currency);
                     }
+                    else
+                    {
+                        currency = exchangeRatesList.Last();
+                        if (singleLineDataArray[2] == currency.SourceCurrencyCode && singleLineDataArray[3] == currency.DestinationCurrencyCode)
+                        {
+                            CurrencyValueDto singleDayValue = MapSingleDayValue(singleLineDataArray);
+                            currency.Values.Add(singleDayValue);
+                        }
+                        else
+                        {
+                            currency = MapNewCurrencyRatesDto(singleLineDataArray);
+                            exchangeRatesList.Add(currency);
+                        }
+                    }
                 }
-            }
 
-            return exchangeRatesList;
+                return exchangeRatesList;
+            }
+            catch (Exception exception)
+            {
+                Log.Error(exception.Message);
+                throw new BadRequestException("Error during parsing data");
+            }
         }
 
         private static CurrencyValueDto MapSingleDayValue(string[] singleLineDataArray)
