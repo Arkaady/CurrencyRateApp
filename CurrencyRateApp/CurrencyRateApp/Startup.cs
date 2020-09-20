@@ -16,6 +16,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Polly;
+using StackExchange.Redis;
 
 namespace CurrencyRateApp
 {
@@ -44,9 +46,21 @@ namespace CurrencyRateApp
             services.AddControllersWithViews(options =>
                 options.Filters.Add(new ApiExceptionFilterAttribute()));
 
+            services.AddHttpClient("ecb", client =>
+            {
+                client.BaseAddress = new Uri(Configuration.GetSection("ECB").GetValue<string>("BaseUrl"));
+                client.DefaultRequestHeaders.Add("Accept", "text/csv");
+            })
+                .AddTransientHttpErrorPolicy(x => x.WaitAndRetryAsync(3, _ => TimeSpan.FromMilliseconds(200)));
+
             services.AddScoped<IHashService, HashService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IExchangeRateService, ExchangeRateService>();
             services.AddScoped<IDatabaseRepository, DatabaseRepository>();
+            services.AddScoped<ICurrencyStatisticService, EcbService>();
+            services.AddSingleton<ICacheService, RedisCacheService>();
+            services.AddSingleton<IConnectionMultiplexer>(x => 
+                ConnectionMultiplexer.Connect(Configuration.GetValue<string>("RedisConnectionString")));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

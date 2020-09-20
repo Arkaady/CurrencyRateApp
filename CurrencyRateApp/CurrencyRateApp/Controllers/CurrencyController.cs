@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using CurrencyRateApp.Dto;
 using CurrencyRateApp.Filters;
+using CurrencyRateApp.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -12,14 +13,21 @@ namespace CurrencyRateApp.Controllers
     [ApiController]
     public class CurrencyController : BaseController<AuthController>
     {
-        public CurrencyController(ILogger<AuthController> logger) : base(logger)
+        private readonly IExchangeRateService _exchangeService;
+
+        public CurrencyController(ILogger<AuthController> logger, IExchangeRateService exchangeService) 
+            : base(logger)
         {
+            _exchangeService = exchangeService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<CurrencyRateResponseDto>>> GetCurrencyRateAsync([FromQuery] CurrencyRateFilter currencyRateFilter)
+        public async Task<ActionResult<List<CurrencyRatesDto>>> GetCurrencyRateAsync([FromQuery] CurrencyRateFilter currencyRateFilter)
         {
-            return Ok();
+            Logger.LogInformation("Started fetching data for exchange rates");
+            var result = await _exchangeService.GetCurrencyRatesAsync(currencyRateFilter);
+            Logger.LogInformation("Fetched data for exchange rates");
+            return Ok(result);
         }
     }
 }

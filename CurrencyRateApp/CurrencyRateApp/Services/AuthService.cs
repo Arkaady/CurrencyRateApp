@@ -1,6 +1,7 @@
 ﻿using CurrencyRateApp.Exceptions;
 using CurrencyRateApp.Repositories;
 using CurrencyRateApp.Services.Interfaces;
+using Microsoft.Extensions.Logging;
 using Serilog;
 using System;
 using System.Threading.Tasks;

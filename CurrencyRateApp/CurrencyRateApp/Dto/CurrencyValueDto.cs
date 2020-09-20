@@ -2,9 +2,9 @@
 
 namespace CurrencyRateApp.Dto
 {
-    public class CurrencyRateResponseDto
+    public class CurrencyValueDto
     {
-        public decimal Value { get; set; }
+        public string Value { get; set; }
         public DateTime Date { get; set; }
     }
 }
