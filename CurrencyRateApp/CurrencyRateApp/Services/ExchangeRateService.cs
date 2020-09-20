@@ -27,6 +27,14 @@ namespace CurrencyRateApp.Services
             _logger = logger;
         }
 
+        /// <summary>
+        /// Grouping all currency codes by target currency to fetch all exchange rates once 
+        /// Checking if cache contains data for selected currency pair, if not they are fetched from api. 
+        /// API return all available data to minimize request amount. All data are saved into cache
+        /// Validate start and end date of currency rates, setting correct date in case of day off 
+        /// </summary>
+        /// <param name="currencyRateFilter"></param>
+        /// <returns></returns>
         public async Task<List<CurrencyRatesDto>> GetCurrencyRatesAsync(CurrencyRateFilter currencyRateFilter)
         {
             _groupedCurrencyPairToDownload = currencyRateFilter.CurrencyCodes

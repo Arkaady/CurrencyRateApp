@@ -4,6 +4,10 @@ namespace CurrencyRateApp.Helpers
 {
     public static class TimeHelper
     {
+        /// <summary>
+        /// Timespan set to midnight to ensure that response will always contain current data
+        /// </summary>
+        /// <returns>Timespan value</returns>
         public static TimeSpan GetTimeToMidnight()
         {
             var tomorrow = DateTime.UtcNow.AddDays(1);

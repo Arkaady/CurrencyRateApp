@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30204.135
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CurrencyRateApp", "CurrencyRateApp\CurrencyRateApp.csproj", "{039397DE-F8F6-4565-BA0D-AF0319DFCF5B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurrencyRateApp.IntegrationTests", "CurrencyRateApp.IntegrationTests\CurrencyRateApp.IntegrationTests.csproj", "{E3F71CC7-2D9D-44A3-B0FA-7D79FEFCA203}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CurrencyRateApp.IntegrationTests", "CurrencyRateApp.IntegrationTests\CurrencyRateApp.IntegrationTests.csproj", "{E3F71CC7-2D9D-44A3-B0FA-7D79FEFCA203}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

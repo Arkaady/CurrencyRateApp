@@ -1,0 +1,41 @@
+version: '3.7'
+networks: 
+    currencyrate:
+        name: currencyrate
+services:
+    #api
+    api:
+        build: .
+        container_name: currencyrateapi
+        ports: 
+            - "8080:80"
+        environment: 
+            ASPNETCORE_ENVIRONMENT: "Production"
+        depends_on: 
+            - db
+            - redis
+        networks:
+            - currencyrate
+            
+    #baza danych
+    db:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        container_name: currencyratedb
+        environment: 
+            ACCEPT_EULA: "Y"
+            SA_PASSWORD: "Password9*"
+        ports: 
+            - "11433:1433"
+        networks:
+            - currencyrate
+    #redis
+    redis:
+        image: redis
+        container_name: currencyrateredis
+        environment:
+            REDIS_REPLICATION_MODE: "master"
+            ALLOW_EMPTY_PASSWORD: "yes"
+        ports:
+            - "6379:6379"
+        networks:
+            - currencyrate
