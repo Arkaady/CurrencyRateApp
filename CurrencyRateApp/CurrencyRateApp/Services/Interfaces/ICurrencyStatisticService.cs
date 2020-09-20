@@ -6,7 +6,7 @@ namespace CurrencyRateApp.Services.Interfaces
 {
     public interface ICurrencyStatisticService
     {
-        public Task<List<CurrencyRatesDto>> GetExchangeRateAsync(string targetCurrencyCode, 
-            List<string> sourceCurrencyCodes);
+        public Task<string> GetExchangeRateAsync(string targetCurrencyCode, List<string> sourceCurrencyCodes);
+        List<CurrencyRatesDto> ParseResultFromApiToObject(string targetCurrencyCode, List<string> sourceCurrencyCodes, string result);
     }
 }

@@ -71,13 +71,15 @@ namespace CurrencyRateApp.Services
 
         private async Task GetExchangeRateFromApiAsync(string targetCurrencyCode, List<string> sourceCurrencyCodesToFetchFromApi)
         {
-            List<CurrencyRatesDto> result = await _currencyStatisticService.GetExchangeRateAsync(targetCurrencyCode, 
+            string result = await _currencyStatisticService.GetExchangeRateAsync(targetCurrencyCode, 
                 sourceCurrencyCodesToFetchFromApi);
+            List<CurrencyRatesDto> parsedResult = _currencyStatisticService.ParseResultFromApiToObject(targetCurrencyCode,
+                sourceCurrencyCodesToFetchFromApi, result);
 
             foreach (var sourceCurrencyCode in sourceCurrencyCodesToFetchFromApi)
             {
                 string cacheKey = GetCacheKey(targetCurrencyCode, sourceCurrencyCode);
-                var currencyRatesDto = result.FirstOrDefault(x => x.SourceCurrencyCode == sourceCurrencyCode);
+                var currencyRatesDto = parsedResult.FirstOrDefault(x => x.SourceCurrencyCode == sourceCurrencyCode);
                 await _cacheService.CacheResponseAsync(cacheKey, currencyRatesDto, TimeHelper.GetTimeToMidnight());
                 _logger.LogInformation($"Set data for {cacheKey} to cache");
                 _downloadedCurrencyRates.Add(currencyRatesDto);

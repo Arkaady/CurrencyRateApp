@@ -15,7 +15,7 @@ namespace CurrencyRateApp.Controllers
             _authService = authService;
         }
 
-        [HttpPut]
+        [HttpGet]
         public async Task<ActionResult<string>> GenerateApiKeyAsync()
         {
             Logger.LogInformation("Started generation new api Key");

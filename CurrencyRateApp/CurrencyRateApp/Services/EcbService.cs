@@ -22,7 +22,7 @@ namespace CurrencyRateApp.Services
             _logger = logger;
         }
 
-        public async Task<List<CurrencyRatesDto>> GetExchangeRateAsync(string targetCurrencyCode, 
+        public async Task<string> GetExchangeRateAsync(string targetCurrencyCode, 
             List<string> sourceCurrencyCodes)
         {
             var httpClient = _httpClientFactory.CreateClient("ecb");
@@ -37,11 +37,10 @@ namespace CurrencyRateApp.Services
             }
 
             var finalUri = $"D.{sourceCurrencyCodesSB}.{targetCurrencyCode}.SP00.A";
-            string result;
             try
             {
                 Log.Information($"Send request to api with uri: {finalUri}");
-                result = await httpClient.GetStringAsync(finalUri);
+                return await httpClient.GetStringAsync(finalUri);
             }
             catch (HttpRequestException exception)
             {
@@ -49,15 +48,16 @@ namespace CurrencyRateApp.Services
                 throw new BadRequestException($"error message from api: {exception.Message}, source currency: {sourceCurrencyCodesSB}, " +
                     $"targer currency: {targetCurrencyCode}");
             }
+        }
 
+        public List<CurrencyRatesDto> ParseResultFromApiToObject(string targetCurrencyCode, List<string> sourceCurrencyCodes, string result)
+        {
             foreach (var singleCurrencyCode in sourceCurrencyCodes)
             {
                 _logger.LogInformation($"Fetched data for {singleCurrencyCode}.{targetCurrencyCode} from API");
             }
             List<CurrencyRatesDto> parsedResult = CsvParsingHelper.ParseCsvResultToCurrencyRatesDtoList(result);
             _logger.LogInformation($"Parsed fetched data to object");
-
-
             return parsedResult;
         }
     }
